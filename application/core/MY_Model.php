@@ -1,8 +1,6 @@
 <?php
-
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
-
 /**
  * Generic data access abstraction.
  *
@@ -14,19 +12,16 @@ interface Active_record {
 //---------------------------------------------------------------------------
 //  Utility methods
 //---------------------------------------------------------------------------
-
     /**
      * Return the number of records in this table.
      * @return int The number of records in this table
      */
     function size();
-
     /**
      * Return the field names in this table, from the table metadata.
      * @return array(string) The field names in this table
      */
     function fields();
-
 //---------------------------------------------------------------------------
 //  C R U D methods
 //---------------------------------------------------------------------------
@@ -36,14 +31,12 @@ interface Active_record {
      * @return object   An object with all its fields in place.
      */
     function create();
-
     /**
      * Add a record to the DB.
      * Request fails if the record already exists.
      * @param mixed $record The record to add, either an object or an associative array.
      */
     function add($record);
-
     /**
      * Retrieve an existing DB record as an object.
      * @param string $key Primary key of the record to return.
@@ -51,14 +44,12 @@ interface Active_record {
      * @return object The requested record, null if not found.
      */
     function get($key, $key2);
-
     /**
      * Update an existing DB record.
      * Method fails if the record does not exist.
      * @param mixed $record The record to update, either an object or an associative array.
      */
     function update($record);
-
     /**
      * Delete an existing DB record.
      * Method fails if the record does not exist.
@@ -66,7 +57,6 @@ interface Active_record {
      * @param string $key2 Second part of composite key, if applicable
      */
     function delete($key, $key2);
-
     /**
      * Determine if a record exists.
      * @param string $key Primary key of the record sought.
@@ -74,13 +64,11 @@ interface Active_record {
      * @return boolean True if the record exists, false otherwise.
      */
     function exists($key, $key2);
-
     /**
      * Determine the highest key used.
      * @return string The highest key
      */
     function highest();
-
 //---------------------------------------------------------------------------
 //  Aggregate methods
 //---------------------------------------------------------------------------
@@ -89,13 +77,11 @@ interface Active_record {
      * @return array(object) All the records in the table.
      */
     function all();
-
     /**
      * Retrieve all DB records, but as a result set.
      * @return mixed The DB query result set.
      */
     function results();
-
     /**
      * Retrieve some of the DB records, namely those for which the
      * value of the field $what matches $which.
@@ -105,7 +91,6 @@ interface Active_record {
      */
     function some($what, $which);
 }
-
 /**
  * Generic data access model, for an RDB.
  *
@@ -114,14 +99,11 @@ interface Active_record {
  * ------------------------------------------------------------------------
  */
 class MY_Model extends CI_Model implements Active_Record {
-
     protected $_tableName;            // Which table is this a model for?
     protected $_keyField;             // name of the primary key field
-
 //---------------------------------------------------------------------------
 //  Housekeeping methods
 //---------------------------------------------------------------------------
-
     /**
      * Constructor.
      * @param string $tablename Name of the RDB table
@@ -129,19 +111,15 @@ class MY_Model extends CI_Model implements Active_Record {
      */
     function __construct($tablename = null, $keyfield = 'id') {
         parent::__construct();
-
         if ($tablename == null)
             $this->_tableName = get_class($this);
         else
             $this->_tableName = $tablename;
-
         $this->_keyField = $keyfield;
     }
-
 //---------------------------------------------------------------------------
 //  Utility methods
 //---------------------------------------------------------------------------
-
     /**
      * Return the number of records in this table.
      * @return int The number of records in this table
@@ -150,7 +128,6 @@ class MY_Model extends CI_Model implements Active_Record {
         $query = $this->db->get($this->_tableName);
         return $query->num_rows();
     }
-
     /**
      * Return the field names in this table, from the table metadata.
      * @return array(string) The field names in this table
@@ -158,7 +135,6 @@ class MY_Model extends CI_Model implements Active_Record {
     function fields() {
         return $this->db->list_fields($this->_tableName);
     }
-
 //---------------------------------------------------------------------------
 //  C R U D methods
 //---------------------------------------------------------------------------
@@ -172,7 +148,6 @@ class MY_Model extends CI_Model implements Active_Record {
             $object->$name = "";
         return $object;
     }
-
     // Add a record to the DB
     function add($record) {
         // convert object to associative array, if needed
@@ -185,7 +160,6 @@ class MY_Model extends CI_Model implements Active_Record {
         $key = $data[$this->_keyField];
         $object = $this->db->insert($this->_tableName, $data);
     }
-
     // Retrieve an existing DB record as an object
     function get($key, $key2 = null) {
         $this->db->where($this->_keyField, $key);
@@ -194,7 +168,6 @@ class MY_Model extends CI_Model implements Active_Record {
             return null;
         return $query->row();
     }
-
     // Update a record in the DB
     function update($record) {
         // convert object to associative array, if needed
@@ -208,13 +181,11 @@ class MY_Model extends CI_Model implements Active_Record {
         $this->db->where($this->_keyField, $key);
         $object = $this->db->update($this->_tableName, $data);
     }
-
     // Delete a record from the DB
     function delete($key, $key2 = null) {
         $this->db->where($this->_keyField, $key);
         $object = $this->db->delete($this->_tableName);
     }
-
     // Determine if a key exists
     function exists($key, $key2 = null) {
         $this->db->where($this->_keyField, $key);
@@ -223,7 +194,6 @@ class MY_Model extends CI_Model implements Active_Record {
             return false;
         return true;
     }
-
 //---------------------------------------------------------------------------
 //  Aggregate methods
 //---------------------------------------------------------------------------
@@ -233,14 +203,12 @@ class MY_Model extends CI_Model implements Active_Record {
         $query = $this->db->get($this->_tableName);
         return $query->result();
     }
-
     // Return all records as a result set
     function results() {
         $this->db->order_by($this->_keyField, 'asc');
         $query = $this->db->get($this->_tableName);
         return $query;
     }
-
     // Return filtered records as an array of records
     function some($what, $which) {
         $this->db->order_by($this->_keyField, 'asc');
@@ -251,7 +219,6 @@ class MY_Model extends CI_Model implements Active_Record {
         $query = $this->db->get($this->_tableName);
         return $query->result();
     }
-
     // Determine the highest key used
     function highest() {
 	$key = $this->_keyField;
@@ -263,20 +230,14 @@ class MY_Model extends CI_Model implements Active_Record {
         else
             return null;
     }
-
 }
-
 class MY_Model2 extends MY_Model {
-
     protected $_keyField2;                 // second part of composite primary key
-
     // Constructor
-
     function __construct($tablename = null, $keyfield = 'id', $keyfield2 = 'part') {
         parent::__construct($tablename, $keyfield);
         $this->_keyField2 = $keyfield2;
     }
-
 //---------------------------------------------------------------------------
 //  Record-oriented functions
 //---------------------------------------------------------------------------
@@ -289,7 +250,6 @@ class MY_Model2 extends MY_Model {
             return null;
         return $query->row();
     }
-
     // Update a record in the DB
     function update($record) {
         // convert object to associative array, if needed
@@ -305,14 +265,12 @@ class MY_Model2 extends MY_Model {
         $this->db->where($this->_keyField2, $key2);
         $object = $this->db->update($this->_tableName, $data);
     }
-
     // Delete a record from the DB
     function delete($key1, $key2) {
         $this->db->where($this->_keyField, $key1);
         $this->db->where($this->_keyField2, $key2);
         $object = $this->db->delete($this->_tableName);
     }
-
     // Determine if a key exists
     function exists($key1, $key2) {
         $this->db->where($this->_keyField, $key1);
@@ -322,7 +280,6 @@ class MY_Model2 extends MY_Model {
             return false;
         return true;
     }
-
 //---------------------------------------------------------------------------
 //  Composite functions
 //---------------------------------------------------------------------------
@@ -334,13 +291,11 @@ class MY_Model2 extends MY_Model {
         $query = $this->db->get($this->_tableName);
         return $query->result();
     }
-
     // Delete all records associated with a member
     function delete_some($key) {
         $this->db->where($this->_keyField, $key);
         $object = $this->db->delete($this->_tableName);
     }
-
     // Determine the highest secondary key associated with a primary
     function highest_some($key) {
         $this->db->where($this->_keyField, $key);
@@ -353,7 +308,6 @@ class MY_Model2 extends MY_Model {
         }
         return $highest;
     }
-
 //---------------------------------------------------------------------------
 //  Aggregate functions
 //---------------------------------------------------------------------------
@@ -364,7 +318,4 @@ class MY_Model2 extends MY_Model {
         $query = $this->db->get($this->_tableName);
         return $query->result();
     }
-
 }
-
-/* End of file */
