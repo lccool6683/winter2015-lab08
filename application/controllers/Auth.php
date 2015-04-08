@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Our public content. 
  * 
@@ -7,15 +8,18 @@
  * ------------------------------------------------------------------------
  */
 class Auth extends Application {
+
     function __construct() {
         parent::__construct();
         $this->load->helper('url');
     }
+
     function index()
     {
         $this->data['pagebody'] = 'login';
         $this->render();
     }
+
      function login() {
         $key = $_POST['userid'];
         $user = $this->users->get($key);

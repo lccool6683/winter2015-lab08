@@ -1,4 +1,5 @@
 <?php
+
 /**
  * core/MY_Controller.php
  *
@@ -9,12 +10,15 @@
  * ------------------------------------------------------------------------
  */
 class Application extends CI_Controller {
+
     protected $data = array();      // parameters for view components
     protected $id;                  // identifier for our content
+
     /**
      * Constructor.
      * Establish view parameters & load common helpers
      */
+
     function __construct() {
         parent::__construct();
         $this->data = array();
@@ -22,6 +26,7 @@ class Application extends CI_Controller {
         $this->errors = array();
         $this->data['pageTitle'] = 'welcome';   // our default page
     }
+
        
     /**
      * Render this page
@@ -30,11 +35,13 @@ class Application extends CI_Controller {
         $menuinfo = array('menudata' => $this->makemenu());
         $this->data['menubar'] = $this->parser->parse('_menubar', $menuinfo, true);
         $this->data['content'] = $this->parser->parse($this->data['pagebody'], $this->data, true);
+
         // finally, build the browser page!
         $this->data['data'] = &$this->data;
         $this->data['sessionid'] = session_id();
         $this->parser->parse('_template', $this->data);
     }
+
     function makemenu() {
         // Get role and name from session
         $name = $this->session->userdata('userName');
